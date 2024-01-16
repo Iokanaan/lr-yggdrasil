@@ -79,20 +79,6 @@ export const effect = function(apply: () => void, dependencies: Signal<unknown>[
     }
 }
 
-export const editableLabel = function(editBtn: Component, label: Component, input: Component, labelContainer: Component, inputContainer: Component) {
-    editBtn.on("click", function() {
-        if(labelContainer.visible()) {
-            labelContainer.hide()
-            inputContainer.show()
-        } else {
-            labelContainer.show()
-            inputContainer.hide()
-        }
-    })
-    input.on("update", function(cmp) {
-        label.value(cmp.value())
-        labelContainer.show()
-        inputContainer.hide()
-    })
+export const difficulteToSR = function() {
+    
 }
-

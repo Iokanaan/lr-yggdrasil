@@ -1,3 +1,4 @@
+import { seuils } from "../globals";
 import { computed } from "../utils/utils";
 
 export const sheetData = function(sheet: PjSheet) {
@@ -18,6 +19,7 @@ export const sheetData = function(sheet: PjSheet) {
             enc_actuel: sheet.attributsSecondaires.enc.actuel(),
             pv_label: sheet.attributsSecondaires.pv.niveauBlessure(),
             pv_max: sheet.attributsSecondaires.pv.max(),
+            difficulte_label: _(seuils[sheet.difficulte()].label)
         }
     }, [
         sheet.attributsSecondaires.ini.total,
@@ -25,7 +27,8 @@ export const sheetData = function(sheet: PjSheet) {
         sheet.attributsSecondaires.dm.total,
         sheet.attributsSecondaires.dep,
         sheet.attributsSecondaires.enc.niveauEnc,
-        sheet.attributsSecondaires.pv.niveauBlessure
+        sheet.attributsSecondaires.pv.niveauBlessure,
+        sheet.difficulte
     ])   
 
     computed(function() {

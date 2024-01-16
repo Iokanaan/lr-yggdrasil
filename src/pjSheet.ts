@@ -1,4 +1,4 @@
-import { attributs } from "./globals"
+import { attributs, difficultes } from "./globals"
 import { computed, signal } from "./utils/utils"
 
 const updateHandler = function<T>(signal: Signal<T>) {
@@ -21,6 +21,7 @@ export const pjSheet = function(sheet: Sheet): PjSheet {
     }
     _pjSheet.attributsSecondaires = {} as any
 
+    _pjSheet.compSelected = signal(undefined)
 
     _pjSheet.attributsSecondaires.dep = computed(function() {
         const dep = _pjSheet.attributs.agi() + _pjSheet.attributs.vig()
@@ -31,6 +32,11 @@ export const pjSheet = function(sheet: Sheet): PjSheet {
         }
     }, [_pjSheet.attributs.agi, _pjSheet.attributs.vig]) 
 
+
+    _pjSheet.bouclier = {} as any
+    _pjSheet.bouclier.actif = signal(_pjSheet.find("has_bouclier").value() as boolean)
+    _pjSheet.bouclier.enc = signal(_pjSheet.find("bouclier_enc").value() as number)
+    _pjSheet.bouclier.dp = signal(_pjSheet.find("bouclier_dp").value() as number)
 
     _pjSheet.attributsSecondaires.enc = {} as any
     _pjSheet.attributsSecondaires.enc.max = computed(function() {
@@ -94,8 +100,12 @@ export const pjSheet = function(sheet: Sheet): PjSheet {
     }, [_pjSheet.attributs.agi,_pjSheet.attributs.vig, _pjSheet.attributs.ins])
     _pjSheet.attributsSecondaires.dp.modif = signal(modifDpCmp.value())
     _pjSheet.attributsSecondaires.dp.total = computed(function() {
-        return _pjSheet.attributsSecondaires.dp.base() + _pjSheet.attributsSecondaires.dp.modif() 
-    }, [_pjSheet.attributsSecondaires.dp.base, _pjSheet.attributsSecondaires.dp.modif])
+        let dp = _pjSheet.attributsSecondaires.dp.base() + _pjSheet.attributsSecondaires.dp.modif()
+        if(_pjSheet.bouclier.actif()) {
+            dp += _pjSheet.bouclier.dp()
+        }
+        return dp
+    }, [_pjSheet.attributsSecondaires.dp.base, _pjSheet.attributsSecondaires.dp.modif, _pjSheet.bouclier.actif, _pjSheet.bouclier.dp])
     modifDpCmp.on("update", updateHandler(_pjSheet.attributsSecondaires.dp.modif))
 
     const modifDmCmp = _pjSheet.find("dm_modif") as Component<number>
@@ -108,6 +118,8 @@ export const pjSheet = function(sheet: Sheet): PjSheet {
         return _pjSheet.attributsSecondaires.dm.base() + _pjSheet.attributsSecondaires.dm.modif() 
     }, [_pjSheet.attributsSecondaires.dm.base, _pjSheet.attributsSecondaires.dm.modif])
     modifDmCmp.on("update", updateHandler(_pjSheet.attributsSecondaires.dm.modif))
+
+    _pjSheet.difficulte = signal(_pjSheet.find("difficulte_level").value() as number)
 
     return _pjSheet
 }
